@@ -1,4 +1,7 @@
 const Movie = require("../models/movie.model.js");
+const request = require('request')
+const CryptoJS = require("crypto-js");
+const keys = require("../config/keys.config");
 
 exports.create = (req, res) => {
   if (!req.body) {
@@ -22,5 +25,86 @@ exports.create = (req, res) => {
       });
     else res.send(data);
   });
-
 };
+
+exports.findOne = (req, res) => {
+  Movie.findById(req.params.movieId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found movie with id ${req.params.movieId}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving movie with id " + req.params.movieId
+        });
+      }
+    } else res.send(data);
+  });
+};
+
+exports.getSource = (req, res) => {
+  Movie.getSource(req.params.movieId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found movie with id ${req.params.movieId}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Error retrieving movie with id " + req.params.movieId
+        });
+      }
+    } else res.send(data);
+  });
+};
+
+const decodeAES = ciphertext => {
+  let bytes = CryptoJS.AES.decrypt(ciphertext, keys.secretKey);
+  let originalText = bytes.toString(CryptoJS.enc.Utf8);
+
+  return originalText
+}
+
+exports.videoplayback = (req, res) => {
+  let url = req.query.url || null
+  let cookie = req.query.cookie || null
+  if (!url || !cookie) {
+    return res.end()
+  }
+
+  url = decodeAES(url)
+  cookie = JSON.parse(new Buffer.from(cookie, 'base64').toString('ascii'))
+
+  if (!url || !cookie) {
+    return res.end()
+  }
+
+  const headers = Object.assign(req.headers, { cookie })
+
+  delete headers.host
+  delete headers.referer
+
+  const stream = request({ url, headers })
+
+  stream.on('response', resp => {
+    res.statusCode = resp.statusCode
+    Object.keys(resp.headers).forEach(key => {
+      res.setHeader(key, resp.headers[key])
+    })
+    res.setHeader('accept-ranges', 'bytes')
+    res.setHeader('connection', 'keep-alive')
+    res.setHeader('content-type', 'video/mp4, video/mpeg')
+    res.setHeader('x-download-options', 'noopen')
+    res.setHeader(
+      'accept',
+      'video/webm,video/ogg,video/*;q=0.9,application/ogg;q=0.7,audio/*;q=0.6,*/*;q=0.5'
+    )
+  })
+
+  stream.pipe(res)
+
+  res.on('close', () => {
+    stream.abort()
+  })
+}
