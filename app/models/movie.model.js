@@ -220,4 +220,25 @@ Movie.remove = (md5, result) => {
   });
 };
 
+Movie.getSubtitle = (movieId, result) => {
+  sql.query(`SELECT * FROM movies WHERE md5 = '${movieId}'`, (err, res) => {
+    if (err) {
+      result(err, null);
+      return;
+    }
+    // res[0].driveId = encodeURIComponent(hashAES(res[0].driveId));
+    // res[0].backupDriveId = encodeURIComponent(hashAES(res[0].backupDriveId));
+
+    if (res.length) {
+      result(null, {
+        success: true,
+        subtitles : JSON.parse(res[0].subtitles)
+      });
+      return;
+    }
+
+    result({ kind: "not_found" }, null);
+  });
+};
+
 module.exports = Movie;

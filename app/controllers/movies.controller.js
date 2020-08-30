@@ -151,3 +151,19 @@ exports.delete = (req, res) => {
     } else res.send({ message: `Movie was deleted successfully!` });
   });
 };
+
+exports.getSubtitle = (req, res) => {
+  Movie.getSubtitle(req.params.movieId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found movie with id ${req.params.movieId}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not get subtitle movie with id " + req.params.movieId
+        });
+      }
+    } else res.send(data);
+  })
+}
