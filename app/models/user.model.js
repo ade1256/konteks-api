@@ -154,7 +154,6 @@ User.findById = (userId, result) => {
 User.updateById = (id, user, result) => {
   bcrypt.hash(user.password, 10, function (err, hashPassword) {
     user.password = hashPassword;
-    console.log(user);
     sql.query(`SELECT * FROM users WHERE id = ${id}`, (err, res) => {
       sql.query(
         "UPDATE users SET email = ?, name = ?, password = ?, updatedAt = ? WHERE id = ?",

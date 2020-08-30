@@ -80,8 +80,8 @@ Movie.findById = (movieId, result) => {
       result(err, null);
       return;
     }
-    res[0].driveId = encodeURIComponent(hashAES(res[0].driveId));
-    res[0].backupDriveId = encodeURIComponent(hashAES(res[0].backupDriveId));
+    // res[0].driveId = encodeURIComponent(hashAES(res[0].driveId));
+    // res[0].backupDriveId = encodeURIComponent(hashAES(res[0].backupDriveId));
 
     if (res.length) {
       result(null, res[0]);
@@ -172,6 +172,52 @@ Movie.getSource = async (movieId, result) => {
       result({ kind: "not_found" }, null);
     }
   );
+};
+
+Movie.updateById = (md5, movie, result) => {
+  sql.query(`SELECT * FROM movies WHERE md5 = '${md5}'`, (err, resMovie) => {
+    console.log(err)
+    sql.query(
+      `UPDATE movies SET title = ?, driveId = ?, backupDriveId = ?, subtitles = ?, userId = ?, updatedAt = '${moment().format()}' WHERE md5 = ?`,
+      [
+        movie.title ? movie.title : resMovie[0].title,
+        movie.driveId ? movie.driveId : resMovie[0].driveId,
+        movie.backupDriveId ? movie.backupDriveId : resMovie[0].backupDriveId,
+        movie.subtitles ? movie.subtitles : resMovie[0].subtitles,
+        movie.userId ? movie.userId: resMovie[0].userId,
+        md5
+      ],
+      (err, res) => {
+        if (err) {
+          result(null, err);
+          return;
+        }
+  
+        if (res.affectedRows == 0) {
+          result({ success: false, kind: "not_found" }, null);
+          return;
+        }
+  
+        result(null, { success: true, md5: md5, ...movie });
+      }
+    );
+  })
+};
+
+Movie.remove = (md5, result) => {
+  sql.query("DELETE FROM movies WHERE md5 = ?", md5, (err, res) => {
+    if (err) {
+      result(null, err);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      result({ success: false, kind: "not_found" }, null);
+      return;
+    }
+
+    result(null, {success: true, message: "Deleted 1 row"});
+  });
 };
 
 module.exports = Movie;

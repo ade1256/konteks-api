@@ -108,3 +108,46 @@ exports.videoplayback = (req, res) => {
     stream.abort()
   })
 }
+
+
+exports.update = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+  }
+
+  Movie.updateById(
+    req.params.movieId,
+    new Movie(req.body),
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found movie with md5 ${req.params.movieId}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error updating movie with md5 " + req.params.movieId
+          });
+        }
+      } else res.send(data);
+    }
+  );
+};
+
+exports.delete = (req, res) => {
+  Movie.remove(req.params.movieId, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found movie with id ${req.params.movieId}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete movie with id " + req.params.movieId
+        });
+      }
+    } else res.send({ message: `Movie was deleted successfully!` });
+  });
+};
