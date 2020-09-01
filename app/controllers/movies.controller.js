@@ -169,18 +169,27 @@ exports.getSubtitle = (req, res) => {
 }
 
 exports.getAll = (req, res) => {
-  Movie.getAll(req, (err, data) => {
-    if(err) {
-      res.status(500).send({
-        success: false,
-        message: "Cannot get movies"
-      })
-    } else {
-      res.send(data)
-    }
-  })
-}
-
-exports.getMoviesByUserId = (req, res) => {
-  console.log(req,res)
+  if(req.user.role === 'admin') {
+    Movie.getAll(req, (err, data) => {
+      if(err) {
+        res.status(500).send({
+          success: false,
+          message: "Cannot get movies"
+        })
+      } else {
+        res.send(data)
+      }
+    })
+  } else {
+    Movie.getAllByUserId(req, (err, data) => {
+      if(err) {
+        res.status(500).send({
+          success: false,
+          message: "Cannot get movies"
+        })
+      } else {
+        res.send(data)
+      }
+    })
+  }
 }
