@@ -96,6 +96,7 @@ User.getAll = async (req, result) => {
   let startNum = 0;
   let limitNum = 10;
   let currentPage = 1;
+  let totalCurrent = 0;
 
   if (req.query.page !== undefined && req.query.size !== undefined) {
     limitNum = parseInt(req.query.size);
@@ -117,11 +118,15 @@ User.getAll = async (req, result) => {
           result(null, err);
           return;
         }
+        if(res.length) {
+          totalCurrent = res.length
+        }
         const dataUsers = {
-          size: parseInt(req.query.size),
+          size: limitNum,
           currentPage,
           totalPage,
           total,
+          totalCurrent,
           content: res,
         };
         result(null, dataUsers);

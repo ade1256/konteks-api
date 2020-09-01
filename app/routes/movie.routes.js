@@ -11,4 +11,10 @@ module.exports = (app) => {
   app.get("/movies/:movieId/subtitle", movies.getSubtitle)
   app.get("/videoplayback", movies.videoplayback)
   app.delete("/movies/:movieId", [isJWT], movies.delete)
+
+  // User
+  app.get("/movies", [isJWT, checkJwt.isUser], movies.getMoviesByUserId)
+
+  // Admin
+  app.get("/movies", [isJWT, checkJwt.isAdmin], movies.getAll)
 }

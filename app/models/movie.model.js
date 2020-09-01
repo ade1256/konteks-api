@@ -241,4 +241,49 @@ Movie.getSubtitle = (movieId, result) => {
   });
 };
 
+Movie.getAll = async (req, result) => {
+  let total = 0;
+  let totalPage = 0;
+  let startNum = 0;
+  let limitNum = 10;
+  let currentPage = 1;
+  let totalCurrent = 0;
+
+  if (req.query.page !== undefined && req.query.size !== undefined) {
+    limitNum = parseInt(req.query.size);
+  }
+
+  await sql.query("select count(*) as total from movies", (err, res) => {
+    total = res[0].total;
+    totalPage = Math.ceil(total / limitNum);
+
+    if (req.query.page > 1) {
+      currentPage = parseInt(req.query.page);
+      startNum = currentPage * limitNum - limitNum;
+    }
+
+    sql.query(
+      `SELECT * FROM movies ORDER BY createdAt DESC limit ${limitNum} OFFSET ${startNum}`,
+      (err, res) => {
+        if (err) {
+          result(null, err);
+          return;
+        }
+        if(res.length) {
+          totalCurrent = res.length
+        }
+        const dataMovies = {
+          size: limitNum,
+          currentPage,
+          totalPage,
+          total,
+          totalCurrent,
+          content: res,
+        };
+        result(null, dataMovies);
+      }
+    );
+  });
+}
+
 module.exports = Movie;
