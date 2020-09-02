@@ -3,7 +3,6 @@ const CryptoJS = require("crypto-js");
 const keys = require("../config/keys.config");
 const moment = require("moment");
 const getTokenGoogle = require("../lib/getTokenGoogle");
-const getLinkViewers = require("../lib/getLinkViewers");
 const directDownload = require("../lib/directDownload");
 const getLinkWithBearer = require("../lib/getLinkWithBearer");
 const nodeCache = require("node-cache");
@@ -118,6 +117,7 @@ Movie.getSource = async (movieId, result) => {
           sourcesDownload: "",
           sourcesBackup: [],
           sourcesBackupDownload: "",
+          title: res[0].title
         };
         const datasWithBearer = await getLinkWithBearer(
           res[0].driveId,
@@ -131,7 +131,7 @@ Movie.getSource = async (movieId, result) => {
         for (let i = 0; i < sources.length; i++) {
           const label = sources[i].label;
           const urnEnc = encodeURIComponent(hashAES(sources[i].file));
-          const file = `http://localhost:3000/videoplayback?url=${urnEnc}&cookie=${cookie}`;
+          const file = `http://localhost:3001/videoplayback?url=${urnEnc}&cookie=${cookie}`;
           resultSrc.sources.push({ file, label, type: "mp4" });
         }
         resultSrc.sourcesDownload = await directDownload.getMediaLink(
@@ -155,7 +155,7 @@ Movie.getSource = async (movieId, result) => {
             const urnEncBackup = encodeURIComponent(
               hashAES(sourcesBackup[i].file)
             );
-            const fileBackup = `http://localhost:3000/videoplayback?url=${urnEncBackup}&cookie=${cookieBackup}`;
+            const fileBackup = `http://localhost:3001/videoplayback?url=${urnEncBackup}&cookie=${cookieBackup}`;
             resultSrc.sourcesBackup.push({
               file: fileBackup,
               label: labelBackup,
