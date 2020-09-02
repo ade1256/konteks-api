@@ -62,7 +62,6 @@ User.login = (user, result) => {
             { expiresIn: 3600 },
             (err, token) => {
               result(null, {
-                message: "Successfully sign in",
                 id: res[0].id,
                 email: res[0].email,
                 name: res[0].name,
@@ -73,19 +72,19 @@ User.login = (user, result) => {
             }
           );
         } else {
-          result(null, {
+          result({
             isLogin: false,
-            message: "Wrong password",
-          });
+            message: "Wrong password !",
+          }, null);
         }
       });
     }
 
     if (res.length === 0) {
-      result(null, {
+      result({
         isLogin: false,
-        message: "Wrong email",
-      });
+        message: "Wrong password !",
+      }, null);
     }
   });
 };
