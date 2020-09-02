@@ -233,10 +233,17 @@ Movie.getSubtitle = (movieId, result) => {
     // res[0].backupDriveId = encodeURIComponent(hashAES(res[0].backupDriveId));
 
     if (res.length) {
-      result(null, {
-        success: true,
-        subtitles : JSON.parse(res[0].subtitles)
-      });
+      if(res[0].subtitles !== "") {
+        result(null, {
+          success: true,
+          subtitles : JSON.parse(res[0].subtitles)
+        });
+      } else {
+        result(null, {
+          success: true,
+          subtitles : res[0].subtitles
+        });
+      }
       return;
     }
 
