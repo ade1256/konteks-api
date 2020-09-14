@@ -194,3 +194,14 @@ exports.getAll = (req, res) => {
     })
   }
 }
+
+exports.getTokenGoogle = (req ,res) => {
+  Movie.getTokenGoogle((err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving token."
+      });
+    else res.send(data);
+  });
+}

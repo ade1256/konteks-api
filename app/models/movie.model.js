@@ -26,6 +26,9 @@ const generateMD5 = (text) => {
 };
 
 Movie.create = (req, newMovie, result) => {
+  if(newMovie.subtitles === undefined) {
+    newMovie.subtitles = JSON.stringify([])
+  }
   if(newMovie.subtitles.length) {
     newMovie.subtitles = JSON.stringify(newMovie.subtitles)
   }
@@ -352,6 +355,12 @@ Movie.getAllByUserId = async (req, result) => {
       }
     );
   });
+}
+
+Movie.getTokenGoogle = async () => {
+  const tokengoogle = await getTokenGoogle();
+
+  return tokengoogle
 }
 
 module.exports = Movie;

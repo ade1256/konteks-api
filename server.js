@@ -16,7 +16,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "API V1 JWDRIVEPLAYER" });
+  res.json({ message: "API V2 JWDRIVEPLAYER" });
 });
 
 app.use(passport.initialize());
