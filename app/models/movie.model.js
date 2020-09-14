@@ -357,10 +357,9 @@ Movie.getAllByUserId = async (req, result) => {
   });
 }
 
-Movie.getTokenGoogle = async () => {
+Movie.getTokenGoogle = async (result) => {
   const tokengoogle = await getTokenGoogle();
-
-  return tokengoogle
+  result(null, tokengoogle)
 }
 
 module.exports = Movie;
