@@ -15,6 +15,7 @@ exports.create = (req, res) => {
     driveId: req.body.driveId,
     backupDriveId: req.body.backupDriveId,
     subtitles: req.body.subtitles,
+    showDownload: req.body.showDownload
   });
 
   Movie.create(req, movie, (err, data) => {
