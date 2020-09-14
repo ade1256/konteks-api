@@ -27,7 +27,7 @@ const generateMD5 = (text) => {
 
 Movie.create = (req, newMovie, result) => {
   if(newMovie.subtitles === undefined) {
-    newMovie.subtitles = JSON.stringify([])
+    newMovie.subtitles = ''
   }
   if(newMovie.subtitles.length) {
     newMovie.subtitles = JSON.stringify(newMovie.subtitles)
