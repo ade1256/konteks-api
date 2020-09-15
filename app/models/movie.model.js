@@ -14,6 +14,7 @@ const Movie = function (movie) {
   this.driveId = movie.driveId;
   this.subtitles = movie.subtitles;
   this.showDownload = movie.showDownload
+  this.backupDriveId = movie.backupDriveId ? movie.backupDriveId : ''
 };
 
 const hashAES = (text) => {
