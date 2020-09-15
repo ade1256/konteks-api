@@ -23,3 +23,33 @@ exports.uploadSubtitle = (req, res) => {
       console.log('error');
     });
 }
+
+exports.getSubscene = async (req, res) => {
+  if(req.query.link !== undefined) {
+    await axios.get(`http://gdriveplayer.to/?subtitle=${req.query.link}`, {
+      headers: {
+        Accept: 'text/plain',
+        'Content-Type': 'text/plain'
+      }
+    }).then(resp => {
+      res.send(resp.data)
+    }).catch(() => {
+      res.status(500).send({message: 'Error'})
+    })
+  }
+}
+
+exports.getSubtitle = async (req, res) => {
+  if(req.params.subtitle !== undefined) {
+    await axios.get(`http://subtitle.gdriveplayer.us/subtitle/${req.params.subtitle}`, {
+      headers: {
+        Accept: 'text/plain',
+        'Content-Type': 'text/plain'
+      }
+    }).then(resp => {
+      res.send(resp.data)
+    }).catch(() => {
+      res.status(500).send({message: 'Error'})
+    })
+  }
+}
