@@ -92,6 +92,7 @@ Movie.findById = (movieId, result) => {
     // res[0].backupDriveId = encodeURIComponent(hashAES(res[0].backupDriveId));
 
     if (res.length) {
+      res[0].subtitles = JSON.parse(res[0].subtitles)
       result(null, res[0]);
       return;
     }
