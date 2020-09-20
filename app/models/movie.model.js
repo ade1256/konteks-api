@@ -190,14 +190,13 @@ Movie.getSource = async (movieId, result) => {
 
 Movie.updateById = (md5, movie, result) => {
   sql.query(`SELECT * FROM movies WHERE md5 = '${md5}'`, (err, resMovie) => {
-    console.log(err)
     sql.query(
       `UPDATE movies SET title = ?, driveId = ?, backupDriveId = ?, subtitles = ?, userId = ?, showDownload = ?, updatedAt = '${moment().format()}' WHERE md5 = ?`,
       [
         movie.title ? movie.title : resMovie[0].title,
         movie.driveId ? movie.driveId : resMovie[0].driveId,
         movie.backupDriveId ? movie.backupDriveId : resMovie[0].backupDriveId,
-        movie.subtitles ? movie.subtitles : resMovie[0].subtitles,
+        movie.subtitles ? JSON.stringify(movie.subtitles) : resMovie[0].subtitles,
         movie.userId ? movie.userId: resMovie[0].userId,
         movie.showDownload ? movie.showDownload: resMovie[0].showDownload,
         md5
