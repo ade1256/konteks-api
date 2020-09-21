@@ -135,15 +135,17 @@ Movie.getSource = async (movieId, result) => {
           tokengoogle
         );
         datas = datasWithBearer;
-        const cookie = new Buffer.from(JSON.stringify(datas.cookie)).toString(
-          "base64"
-        );
-        const sources = datas.sources;
-        for (let i = 0; i < sources.length; i++) {
-          const label = sources[i].label;
-          const urnEnc = encodeURIComponent(hashAES(sources[i].file));
-          const file = `http://localhost:3001/videoplayback?url=${urnEnc}&cookie=${cookie}`;
-          resultSrc.sources.push({ file, label, type: "mp4" });
+        if(datas !== null) {
+          const cookie = new Buffer.from(JSON.stringify(datas.cookie)).toString(
+            "base64"
+          );
+          const sources = datas.sources;
+          for (let i = 0; i < sources.length; i++) {
+            const label = sources[i].label;
+            const urnEnc = encodeURIComponent(hashAES(sources[i].file));
+            const file = `http://localhost:3001/videoplayback?url=${urnEnc}&cookie=${cookie}`;
+            resultSrc.sources.push({ file, label, type: "mp4" });
+          }
         }
         resultSrc.sourcesDownload = await directDownload.getMediaLink(
           res[0].driveId,
@@ -157,21 +159,23 @@ Movie.getSource = async (movieId, result) => {
             tokengoogle
           );
           datasBackup = datasWithBearerBackup;
-          const cookieBackup = new Buffer.from(
-            JSON.stringify(datasBackup.cookie)
-          ).toString("base64");
-          const sourcesBackup = datasBackup.sources;
-          for (let i = 0; i < sourcesBackup.length; i++) {
-            const labelBackup = sourcesBackup[i].label;
-            const urnEncBackup = encodeURIComponent(
-              hashAES(sourcesBackup[i].file)
-            );
-            const fileBackup = `http://localhost:3001/videoplayback?url=${urnEncBackup}&cookie=${cookieBackup}`;
-            resultSrc.sourcesBackup.push({
-              file: fileBackup,
-              label: labelBackup,
-              type: "mp4",
-            });
+          if(datasBackup !== null) {
+            const cookieBackup = new Buffer.from(
+              JSON.stringify(datasBackup.cookie)
+            ).toString("base64");
+            const sourcesBackup = datasBackup.sources;
+            for (let i = 0; i < sourcesBackup.length; i++) {
+              const labelBackup = sourcesBackup[i].label;
+              const urnEncBackup = encodeURIComponent(
+                hashAES(sourcesBackup[i].file)
+              );
+              const fileBackup = `http://localhost:3001/videoplayback?url=${urnEncBackup}&cookie=${cookieBackup}`;
+              resultSrc.sourcesBackup.push({
+                file: fileBackup,
+                label: labelBackup,
+                type: "mp4",
+              });
+            }
           }
           resultSrc.sourcesBackupDownload = await directDownload.getMediaLink(
             res[0].backupDriveId,

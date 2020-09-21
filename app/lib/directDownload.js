@@ -24,7 +24,7 @@ const URL = require('url')
 
 const createFailedResponse = (status, error) => {
   return {
-    satusCode: status,
+    statusCode: status,
     error
   }
 }
