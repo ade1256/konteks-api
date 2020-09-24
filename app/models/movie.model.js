@@ -147,10 +147,7 @@ Movie.getSource = async (movieId, result) => {
             resultSrc.sources.push({ file, label, type: "mp4" });
           }
         }
-        resultSrc.sourcesDownload = await directDownload.getMediaLink(
-          res[0].driveId,
-          tokengoogle
-        );
+        resultSrc.sourcesDownload = `http://localhost:3001/drive/streamOriginal?driveId=${encodeURIComponent(hashAES(res[0].driveId))}`
 
         if (res[0].backupDriveId !== "") {
           let datasBackup = null;
@@ -177,10 +174,7 @@ Movie.getSource = async (movieId, result) => {
               });
             }
           }
-          resultSrc.sourcesBackupDownload = await directDownload.getMediaLink(
-            res[0].backupDriveId,
-            tokengoogle
-          );
+          resultSrc.sourcesBackupDownload =`http://localhost:3001/drive/streamOriginal?driveId=${encodeURIComponent(hashAES(res[0].backupDriveId))}`
         }
         CACHE.set(movieId, resultSrc, 60 * 60 * 6);
         result(null, resultSrc);
