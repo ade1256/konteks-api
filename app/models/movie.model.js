@@ -267,13 +267,12 @@ Movie.getAll = async (req, result) => {
   let limitNum = 10;
   let currentPage = 1;
   let totalCurrent = 0;
-  let content = []
 
   if (req.query.page !== undefined && req.query.size !== undefined) {
     limitNum = parseInt(req.query.size);
   }
 
-  await sql.query("select count(*) as total from movies", (err, res) => {
+  await sql.query(`select count(*) as total from movies`, (err, res) => {
     total = res[0].total;
     totalPage = Math.ceil(total / limitNum);
 
@@ -291,9 +290,10 @@ Movie.getAll = async (req, result) => {
         }
         if(res.length) {
           totalCurrent = res.length
-          
           res.map(movies => {
-            movies.subtitles = JSON.parse(movies.subtitles)
+            if(movies.subtitles[0] !== undefined) {
+              movies.subtitles = JSON.parse(movies.subtitles)
+            }
           })
         }
         const dataMovies = {

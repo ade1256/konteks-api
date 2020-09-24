@@ -14,43 +14,17 @@ const decodeAES = ciphertext => {
   return originalText
 }
 
-// exports.createDrive = async (req, res) => {
-//   const token = await getTokenGoogle();
-//   const oauth2Client = new google.auth.OAuth2()
-//   oauth2Client.setCredentials({
-//     'access_token': token
-//   });
-
-//   const drive = google.drive({
-//     version: 'v3',
-//     auth: oauth2Client
-//   });
-
-//   //move file to google drive
-//   let { name: filename, mimetype, data } = req.files.file
-
-//   await drive.files.create({
-//     resource: {
-//       name: 'filename.mp4',
-//       mimeType: 'application/vnd.google-apps.video'
-//     },
-//     media: {
-//       mimeType: 'video/mp4',
-//       body: new Buffer.from(data)
-//     },  
-//     fields: 'id'
-//   }).then(data => {
-//     res.send(data.data)
-//   }).catch((error) => {
-//     res.status(500).send({
-//       message: error.message
-//     })
-//   })
-// }
-
 exports.createDrive = async (req, res) => {
   const token = await getTokenGoogle();
   const formData = new FormData()
+  const oauth2Client = new google.auth.OAuth2()
+  oauth2Client.setCredentials({
+    'access_token': token
+  });
+  const drive = google.drive({
+    version: 'v2',
+    auth: oauth2Client
+  });
 
   const headers = {
     ...formData.getHeaders(),
@@ -72,8 +46,13 @@ exports.createDrive = async (req, res) => {
     maxBodyLength: Infinity,
   }
   // application/vnd.google-apps.video
-  axios(config)
+  await axios(config)
     .then(function (response) {
+      drive.files.patch({
+        'fileId': response.data.id,
+        'resource': {'title': req.files.file.name}
+      });
+      response.data.name = req.files.file.name
       res.send(response.data)
     })
     .catch(function (error) {
