@@ -74,7 +74,6 @@ exports.streamOriginal = async (req, res) => {
   });
 
   const fileId = decodeAES(req.query.driveId);
-  // const fileId = '1Kk2ezso1drS1l7jXXpvre5_loVLPkx54'
 
   return drive.files
     .get({ fileId, alt: 'media' }, { responseType: 'stream' })
@@ -125,5 +124,55 @@ exports.downloadFile = async (req, res) => {
         res.writeHead(200, head)
         resp.data.pipe(res);
       });
+    });
+}
+
+exports.uploadSubtitle = async (req, res) => {
+  const token = await getTokenGoogle();
+  const formData = new FormData()
+  const oauth2Client = new google.auth.OAuth2()
+  oauth2Client.setCredentials({
+    'access_token': token
+  });
+  const drive = google.drive({
+    version: 'v2',
+    auth: oauth2Client
+  });
+
+  const headers = {
+    ...formData.getHeaders(),
+    'Content-Type': 'text/plain',
+    'Authorization': `Bearer ${token}`,
+    'X-Upload-Content-Type': 'text/plain',
+    'X-Upload-Content-Length': req.files.file.size,
+    'Content-Length': req.files.file.size
+  }
+
+  const url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=media'
+
+  const config = {
+    method: 'post',
+    url,
+    headers,
+    data: req.files.file.data,
+    maxContentLength: Infinity,
+    maxBodyLength: Infinity,
+  }
+
+  await axios(config)
+    .then(function (response) {
+      drive.files.patch({
+        'fileId': response.data.id,
+        'resource': {'title': req.files.file.name},
+        'parents': ['1YpesFjBTE2JMe6RlWhXKE3mX2NzgOflM'],
+        'mimeType': 'text/plain'
+      });
+      response.data.name = req.files.file.name
+      res.send(response.data)
+    })
+    .catch(function (error) {
+      res.status(500).send({
+        message: error.message
+      })
     });
 }

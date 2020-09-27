@@ -3,7 +3,6 @@ const CryptoJS = require("crypto-js");
 const keys = require("../config/keys.config");
 const moment = require("moment");
 const getTokenGoogle = require("../lib/getTokenGoogle");
-const directDownload = require("../lib/directDownload");
 const getLinkWithBearer = require("../lib/getLinkWithBearer");
 const nodeCache = require("node-cache");
 const CACHE = new nodeCache();
@@ -363,6 +362,107 @@ Movie.getAllByUserId = async (req, result) => {
 Movie.getTokenGoogle = async (result) => {
   const tokengoogle = await getTokenGoogle();
   result(null, tokengoogle)
+}
+
+Movie.searchByKeyword = async (req, result) => {
+  let total = 0;
+  let totalPage = 0;
+  let startNum = 0;
+  let limitNum = 10;
+  let currentPage = 1;
+  let totalCurrent = 0;
+  const keyword = req.query.keyword
+  const queryTotalSql = `SELECT count(*) as total FROM movies WHERE title LIKE '%${keyword}%' or md5 LIKE '%${keyword}%' or driveId LIKE '%${keyword}%'`
+
+  if (req.query.page !== undefined && req.query.size !== undefined) {
+    limitNum = parseInt(req.query.size);
+  }
+
+  await sql.query(queryTotalSql, (err, res) => {
+    total = res[0].total;
+    totalPage = Math.ceil(total / limitNum);
+
+    if (req.query.page > 1) {
+      currentPage = parseInt(req.query.page);
+      startNum = currentPage * limitNum - limitNum;
+    }
+
+    const querySql = `SELECT * FROM movies WHERE title LIKE '%${keyword}%' or md5 LIKE '%${keyword}%' or driveId LIKE '%${keyword}%' ORDER BY createdAt DESC limit ${limitNum} OFFSET ${startNum}`
+    sql.query(querySql, (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+      if(res.length) {
+        totalCurrent = res.length
+        res.map(movies => {
+          if(movies.subtitles[0] !== undefined) {
+            movies.subtitles = JSON.parse(movies.subtitles)
+          }
+        })
+      }
+      const dataMovies = {
+        size: limitNum,
+        currentPage,
+        totalPage,
+        total,
+        totalCurrent,
+        content: res,
+      };
+      result(null, dataMovies);
+    })
+  })
+}
+
+Movie.searchByKeywordByUserId = async (req, result) => {
+  let total = 0;
+  let totalPage = 0;
+  let startNum = 0;
+  let limitNum = 10;
+  let currentPage = 1;
+  let totalCurrent = 0;
+  const keyword = req.query.keyword
+  const queryTotalSql = `SELECT count(*) as total FROM movies WHERE title LIKE '%${keyword}%' or md5 LIKE '%${keyword}%' or driveId LIKE '%${keyword}%' and userId = ${req.user.id}`
+
+  if (req.query.page !== undefined && req.query.size !== undefined) {
+    limitNum = parseInt(req.query.size);
+  }
+
+  await sql.query(queryTotalSql, (err, res) => {
+    total = res[0].total;
+    totalPage = Math.ceil(total / limitNum);
+
+    if (req.query.page > 1) {
+      currentPage = parseInt(req.query.page);
+      startNum = currentPage * limitNum - limitNum;
+    }
+
+    const querySql = `SELECT * FROM movies WHERE title LIKE '%${keyword}%' or md5 LIKE '%${keyword}%' or driveId LIKE '%${keyword}%' and userId = ${req.user.id} ORDER BY createdAt DESC limit ${limitNum} OFFSET ${startNum}`
+    sql.query(querySql, (err, res) => {
+      if (err) {
+        result(null, err);
+        return;
+      }
+      if(res.length) {
+        totalCurrent = res.length
+        res.map(movies => {
+          if(movies.subtitles[0] !== undefined) {
+            movies.subtitles = JSON.parse(movies.subtitles)
+          }
+        })
+      }
+      const dataMovies = {
+        size: limitNum,
+        currentPage,
+        totalPage,
+        total,
+        totalCurrent,
+        content: res,
+      };
+      result(null, dataMovies);
+    })
+  })
+
 }
 
 module.exports = Movie;

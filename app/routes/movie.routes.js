@@ -5,6 +5,7 @@ module.exports = (app) => {
   const isJWT = passport.authenticate('jwt', { session: false })
   
   app.post("/movies", [isJWT, checkJwt.isUser], movies.create)
+  app.get("/movies/search", [isJWT], movies.searchByKeyword)
   app.get("/movies/token", [isJWT], movies.getTokenGoogle)
   app.get("/movies/:movieId", [isJWT], movies.findOne)
   app.put("/movies/:movieId", [isJWT], movies.update)

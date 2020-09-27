@@ -205,3 +205,29 @@ exports.getTokenGoogle = (req ,res) => {
     else res.send(data);
   });
 }
+
+exports.searchByKeyword = (req, res) => {
+  if(req.user.role === 'admin') {
+    Movie.searchByKeyword(req, (err, data) => {
+      if(err) {
+        res.status(500).send({
+          success: false,
+          message: "Cannot get movies"
+        })
+      } else {
+        res.send(data)
+      }
+    })
+  } else {
+    Movie.searchByKeywordByUserId(req, (err, data) => {
+      if(err) {
+        res.status(500).send({
+          success: false,
+          message: "Cannot get movies"
+        })
+      } else {
+        res.send(data)
+      }
+    })
+  }
+}
