@@ -421,7 +421,14 @@ Movie.searchByKeywordByUserId = async (req, result) => {
   let limitNum = 10;
   let currentPage = 1;
   let totalCurrent = 0;
-  const keyword = req.query.keyword
+  let keyword = ''
+  var regex = /[^A-Za-z0-9]+/g;
+  if(regex.test(req.query.keyword)) {
+    keyword = ''
+  } else {
+    keyword = req.query.keyword
+  }
+  
   const queryTotalSql = `SELECT count(*) as total FROM movies WHERE title LIKE '%${keyword}%' or md5 LIKE '%${keyword}%' or driveId LIKE '%${keyword}%' and userId = ${req.user.id}`
 
   if (req.query.page !== undefined && req.query.size !== undefined) {
@@ -429,6 +436,9 @@ Movie.searchByKeywordByUserId = async (req, result) => {
   }
 
   await sql.query(queryTotalSql, (err, res) => {
+    if(err) {
+      result(null, err)
+    }
     total = res[0].total;
     totalPage = Math.ceil(total / limitNum);
 
