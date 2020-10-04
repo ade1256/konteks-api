@@ -451,13 +451,19 @@ Movie.searchByKeywordByUserId = async (req, result) => {
           }
         })
       }
+      let dataMoviesByUserId = []
+      res.map(movies => {
+        if(movies.userId === req.user.id) {
+          dataMoviesByUserId.push(movies)
+        }
+      })
       const dataMovies = {
         size: limitNum,
         currentPage,
         totalPage,
-        total,
+        total: dataMoviesByUserId.length,
         totalCurrent,
-        content: res,
+        content: dataMoviesByUserId,
       };
       result(null, dataMovies);
     })

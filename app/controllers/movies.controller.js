@@ -207,6 +207,16 @@ exports.getTokenGoogle = (req ,res) => {
 }
 
 exports.searchByKeyword = (req, res) => {
+  if(req.query.page === undefined) {
+    res.status(400).send({
+      message: "should have query page"
+    })
+  }
+  if(req.query.size === undefined) {
+    res.status(400).send({
+      message: "should have query size"
+    })
+  }
   if(req.user.role === 'admin') {
     Movie.searchByKeyword(req, (err, data) => {
       if(err) {

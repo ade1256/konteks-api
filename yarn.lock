@@ -1777,6 +1777,11 @@ tough-cookie@~2.5.0:
     psl "^1.1.28"
     punycode "^2.1.1"
 
+trim-request@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/trim-request/-/trim-request-1.0.6.tgz#65ae5a94eac1d70d0060e40fd71b5d9e365ab254"
+  integrity sha1-Za5alOrB1w0AYOQP1xtdnjZaslQ=
+
 tunnel-agent@^0.6.0:
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/tunnel-agent/-/tunnel-agent-0.6.0.tgz#27a5dea06b36b04a0a9966774b290868f0fc40fd"
