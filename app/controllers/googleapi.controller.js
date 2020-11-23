@@ -176,3 +176,24 @@ exports.uploadSubtitle = async (req, res) => {
       })
     });
 }
+
+exports.filesGet = async (req, res) => {
+  const token = await getTokenGoogle();
+  const oauth2Client = new google.auth.OAuth2()
+  oauth2Client.setCredentials({
+    'access_token': token
+  });
+  const drive = google.drive({
+    version: 'v3',
+    auth: oauth2Client
+  });
+
+  const resp = await drive.files.get({
+    fileId: req.params.driveId
+  }).catch(function (error) {
+    res.status(500).send({
+      message: error.message
+    })
+  })
+  res.send(resp.data)
+}

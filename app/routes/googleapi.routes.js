@@ -4,4 +4,5 @@ module.exports = (app) => {
   app.get('/drive/download', googleapi.downloadFile)
   app.get('/drive/streamOriginal', googleapi.streamOriginal)
   app.post('/drive/uploadSubtitle', googleapi.uploadSubtitle)
+  app.get('/drive/files/get/:driveId', googleapi.filesGet)
 }
