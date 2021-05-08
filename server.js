@@ -20,17 +20,16 @@ app.use(fileUpload());
 
 // simple route
 app.get("/", (req, res) => {
-  res.json({ message: "API V2 JWDRIVEPLAYER" });
+  res.json({ message: "API V1 KONTEKSTUAL KOPI" });
 });
 
 app.use(passport.initialize());
 
 require("./app/config/passport.config")(passport);
-require("./app/routes/customer.routes.js")(app);
-require("./app/routes/user.routes.js")(app);
-require("./app/routes/movie.routes.js")(app);
-require('./app/routes/subtitle.routes')(app)
-require('./app/routes/googleapi.routes')(app)
+require("./app/routes/admins.routes.js")(app);
+require("./app/routes/category.routes.js")(app);
+require("./app/routes/products.routes.js")(app);
+require("./app/routes/orders.routes.js")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3001;

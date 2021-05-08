@@ -1,3 +1,3 @@
 module.exports = {
-  secretKey: '@jwdriveplayer'
+  secretKey: '@kontekstualk0p1'
 }
