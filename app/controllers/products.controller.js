@@ -24,3 +24,18 @@ exports.create = (req, res) => {
     else res.send(data);
   });
 };
+
+exports.getAll = (req, res) => {
+  // const isEmptyFilters = Object.keys(req.query).length === 0
+  let filters = {
+    page: req.query.page === undefined ? 1 : req.query.page
+  }
+  Products.getAll(filters, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while get the Products."
+      });
+    else res.send(data);
+  });
+}

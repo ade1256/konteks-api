@@ -39,4 +39,26 @@ Products.create = (newProduct, result) => {
   );
 };
 
+Products.getAll = (filter, result) => {
+  console.log(filter)
+  let offset = (filter.page*10)-10
+  const queryGetAll = `SELECT * FROM products LIMIT 10 OFFSET ${offset}`
+  sql.query(queryGetAll, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    let parseJson = []
+    res.map(product => {
+      parseJson.push({
+        ...product,
+        variants: JSON.parse(product.variants)
+      })
+      return ''
+    })
+    result(null, parseJson)
+  })
+}
+
 module.exports = Products;
