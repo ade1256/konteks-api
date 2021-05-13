@@ -12,7 +12,8 @@ exports.create = (req, res) => {
     name: req.body.name,
     slug: req.body.slug,
     categoryId: req.body.categoryId,
-    variants: req.body.variants
+    variants: req.body.variants,
+    description: req.body.description
   });
 
   Products.create(product, (err, data) => {

@@ -7,6 +7,7 @@ const Products = function (product) {
   this.slug = product.slug;
   this.categoryId = product.categoryId;
   this.variants = product.variants;
+  this.description = product.description;
 };
 
 Products.create = (newProduct, result) => {
