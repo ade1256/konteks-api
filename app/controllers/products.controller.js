@@ -40,3 +40,14 @@ exports.getAll = (req, res) => {
     else res.send(data);
   });
 }
+
+exports.getBySlug = (req, res) => {
+  Products.getBySlug(req.params.slug, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while get the Products."
+      });
+    else res.send(data);
+  });
+}
