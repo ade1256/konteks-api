@@ -30,6 +30,7 @@ require("./app/routes/admins.routes.js")(app);
 require("./app/routes/category.routes.js")(app);
 require("./app/routes/products.routes.js")(app);
 require("./app/routes/orders.routes.js")(app);
+require("./app/routes/rajaongkir.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 3001;
