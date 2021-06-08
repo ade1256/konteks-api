@@ -3,5 +3,7 @@ module.exports = app => {
 
   app.get("/provinces", rajaongkir.getProvinces)
   app.get("/cities", rajaongkir.getCities)
-  app.post("/shipping-cost", rajaongkir.getCost)
+  app.get("/subdistrict", rajaongkir.getSubdistrict)
+  app.post("/cek/ongkir", rajaongkir.getCost)
+  app.post("/cek/resi", rajaongkir.getResi)
 };
