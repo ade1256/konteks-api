@@ -9,34 +9,60 @@ const axiosInstance = axios.create({
 axiosInstance.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axiosInstance.defaults.headers.post['key'] = config.rajaOngkirKey;
 
-exports.getProvinces = (req, res) => {
-  axiosInstance.get(`/province?key=${config.rajaOngkirKey}`).then(resp => {
-    res.send(resp.data.rajaongkir.results)
+exports.getProvinces = async (req, res) => {
+  let provinces = []
+  await axiosInstance.get(`/province?key=${config.rajaOngkirKey}`).then(resp => {
+    resp.data.rajaongkir.results.map((item, key) => {
+      provinces.push({
+        id: item.province_id,
+        name: item.province
+      })
+    })
   }).catch(err => {
     res.send(err.response.data.rajaongkir)
   })
+  res.send(provinces)
 }
 
-exports.getCities = (req, res) => {
-  axiosInstance.get(`/city?key=${config.rajaOngkirKey}`).then(resp => {
-    res.send(resp.data.rajaongkir.results)
+exports.getCities = async (req, res) => {
+  let cities = []
+  let filter = `?key=${config.rajaOngkirKey}`;
+  if (req.query.province !== undefined) {
+    filter = filter + `&province=${req.query.province}`
+  }
+  await axiosInstance.get(`/city${filter}`).then(resp => {
+    resp.data.rajaongkir.results.map((item, key) => {
+      cities.push({
+        id: item.city_id,
+        name: item.city_name,
+        type: item.type,
+        postal_code: item.postal_code
+      })
+    })
   }).catch(err => {
     res.send(err.response.data.rajaongkir)
   })
+  res.send(cities)
 }
 
-exports.getSubdistrict = (req, res) => {
-  console.log(req)
-  axiosInstance.get(`/subdistrict?key=${config.rajaOngkirKey}`, {
+exports.getSubdistrict = async (req, res) => {
+  let newArray = []
+  await axiosInstance.get(`/subdistrict?key=${config.rajaOngkirKey}`, {
     params: {
       city: req.query.city,
       id: req.query.id
     }
   }).then(resp => {
-    res.send(resp.data.rajaongkir.results)
+    resp.data.rajaongkir.results.map((item, key) => {
+      newArray.push({
+        id: item.subdistrict_id,
+        name: item.subdistrict_name
+      })
+    })
   }).catch(err => {
     res.send(err.response.data.rajaongkir)
   })
+  res.send(newArray)
 }
 
 exports.getCost = (req, res) => {
