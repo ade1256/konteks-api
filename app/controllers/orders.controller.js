@@ -14,10 +14,12 @@ exports.create = (req, res) => {
     customerPhone: req.body.customerPhone,
     customerCity: req.body.customerCity,
     customerSubdistrict: req.body.customerSubdistrict,
+    customerSubdistrictId: req.body.customerSubdistrictId,
     customerAddress: req.body.customerAddress,
     customerNote: req.body.customerNote,
     courier: req.body.courier,
-    paymentBankId: req.body.paymentBankId
+    paymentBankId: req.body.paymentBankId,
+    cost: req.body.cost
   });
 
   Orders.create(order, (err, data) => {

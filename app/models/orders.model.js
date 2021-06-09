@@ -8,10 +8,12 @@ const Orders = function (order) {
   this.customerPhone = order.customerPhone;
   this.customerCity = order.customerCity;
   this.customerSubdistrict = order.customerSubdistrict;
+  this.customerSubdistrictId = order.customerSubdistrictId;
   this.customerAddress = order.customerAddress;
   this.customerNote = order.customerNote;
   this.courier = order.courier;
-  this.paymentBankId = order.paymentBankId
+  this.paymentBankId = order.paymentBankId;
+  this.cost = order.cost;
 };
 
 const getPriceAfterDiscountAndQuantity = async (price, discount, quantity) => {
@@ -36,7 +38,7 @@ const getVariantsByProduct =  (products) => {
 }
 
 Orders.create = async (newOrder, result) => {
-  let total = 0
+  let total = newOrder.cost
   let getVariants = getVariantsByProduct(newOrder.products)
   await sql.query(`SELECT * from orders`, async (errOrders, ordersAll) => {
     const codeUnique = `K${ordersAll.length+6}${ordersAll.length+13}KPI${ordersAll.length+1}${ordersAll.length}`
@@ -54,6 +56,7 @@ Orders.create = async (newOrder, result) => {
       createdAt: moment().format(),
       updatedAt: moment().format(),
     }
+    delete body.cost
     
     await sql.query(
       "INSERT INTO orders SET ?",
