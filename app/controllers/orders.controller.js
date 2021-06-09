@@ -9,13 +9,15 @@ exports.create = (req, res) => {
   }
 
   const order = new Orders({
-    productId: req.body.productId,
-    variantId: req.body.variantId,
+    products: req.body.products,
     customerName: req.body.customerName,
     customerPhone: req.body.customerPhone,
     customerCity: req.body.customerCity,
+    customerSubdistrict: req.body.customerSubdistrict,
     customerAddress: req.body.customerAddress,
-    quantity: req.body.quantity
+    customerNote: req.body.customerNote,
+    courier: req.body.courier,
+    paymentBankId: req.body.paymentBankId
   });
 
   Orders.create(order, (err, data) => {
