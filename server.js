@@ -5,7 +5,6 @@ const cors = require("cors");
 const fileUpload = require('express-fileupload')
 
 const app = express();
-
 // CORS
 app.use(cors());
 
@@ -16,8 +15,15 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // file upload
-app.use(fileUpload());
-
+app.use(fileUpload({
+  createParentPath: true,
+  limits: { 
+    fileSize: 5 * 1024 * 1024 * 1024 //2MB max file(s) size
+  },
+  safeFileNames: true,
+  preserveExtension: true
+}));
+app.use('/uploads',express.static('uploads'))
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "API V1 KONTEKSTUAL KOPI" });

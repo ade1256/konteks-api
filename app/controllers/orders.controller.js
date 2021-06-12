@@ -1,4 +1,5 @@
 const Orders = require("../models/orders.model")
+const Payment = require("../models/orderPayment.model");
 
 exports.create = (req, res) => {
   // Validate request
@@ -31,3 +32,30 @@ exports.create = (req, res) => {
     else res.send(data);
   });
 };
+
+exports.uploadPayment = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+  }
+  if(!req.files) {
+    res.status(400).send({
+        status: false,
+        message: 'No file uploaded'
+    });
+  } else {
+    let payment = {
+      orderId: req.body.orderId,
+      file: req.files.file
+    }
+    Payment.uploadPayment(payment, (err, data) => {
+      if (err)
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the Payment."
+      });
+     else res.send(data);
+    })
+  }
+}
