@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const cors = require("cors");
 const fileUpload = require('express-fileupload')
+const dotenv = require('dotenv')
+dotenv.config()
 
 const app = express();
 // CORS
