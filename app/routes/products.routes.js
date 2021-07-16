@@ -8,4 +8,6 @@ module.exports = app => {
   app.post("/products", [isJWT], products.create);
   app.get("/products", products.getAll);
   app.get("/products/:slug", products.getBySlug)
+  app.delete("/products/:slug", [isJWT], products.delete);
+  app.put("/products/:id", [isJWT], products.update);
 };

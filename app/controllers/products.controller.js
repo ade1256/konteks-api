@@ -51,3 +51,45 @@ exports.getBySlug = (req, res) => {
     else res.send(data);
   });
 }
+
+exports.delete = (req, res) => {
+  Products.remove(req.params.slug, (err, data) => {
+    if (err) {
+      if (err.kind === "not_found") {
+        res.status(404).send({
+          message: `Not found product with id ${req.params.slug}.`
+        });
+      } else {
+        res.status(500).send({
+          message: "Could not delete product with id " + req.params.slug
+        });
+      }
+    } else res.send({ message: `Product was deleted successfully!` });
+  });
+};
+
+exports.update = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+  }
+
+  Products.updateById(
+    req.params.id,
+    new Products(req.body),
+    (err, data) => {
+      if (err) {
+        if (err.kind === "not_found") {
+          res.status(404).send({
+            message: `Not found product with id ${req.params.id}.`
+          });
+        } else {
+          res.status(500).send({
+            message: "Error updating product with id " + req.params.id
+          });
+        }
+      } else res.send(data);
+    }
+  );
+};
