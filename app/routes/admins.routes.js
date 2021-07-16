@@ -3,4 +3,5 @@ module.exports = app => {
 
   // Create a new Customer
   app.post("/admins", admins.create);
+  app.post("/login", admins.login);
 };

@@ -6,7 +6,6 @@ const moment = require("moment");
 
 const Admin = function (admin) {
   this.username = admin.username;
-  this.name = admin.name;
   this.password = admin.password;
 };
 
@@ -42,5 +41,58 @@ Admin.create = (newAdmin, result) => {
     );
   });
 };
+
+Admin.login = (admin, result) => {
+  sql.query(`SELECT * FROM admins WHERE username = '${admin.username}'`, (err, res) => {
+    if (err) {
+      result(err, null);
+      return;
+    }
+    if (res.length > 0) {
+      bcrypt.compare(admin.password, res[0].password, function (
+        errLogin,
+        isLogin
+      ) {
+        if (isLogin) {
+          const payload = {
+            id: res[0].id,
+            name: res[0].name,
+            username: res[0].username,
+            phone: res[0].phone,
+          };
+
+          jwt.sign(
+            payload,
+            keys.secretKey,
+            { expiresIn: 3600 },
+            (err, token) => {
+              result(null, {
+                id: res[0].id,
+                username: res[0].username,
+                name: res[0].name,
+                phone: res[0].phone,
+                isLogin: true,
+                token,
+              });
+            }
+          );
+        } else {
+          result({
+            isLogin: false,
+            message: "Wrong password !",
+          }, null);
+        }
+      });
+    }
+
+    if (res.length === 0) {
+      result({
+        isLogin: false,
+        message: "Wrong password !",
+      }, null);
+    }
+  });
+};
+
 
 module.exports = Admin;

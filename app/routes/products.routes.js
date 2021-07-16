@@ -1,7 +1,11 @@
 module.exports = app => {
   const products = require("../controllers/products.controller");
+  const checkJwt = require("../controllers/checkJwt.controller.js")
+  const passport = require("passport")
+  const trimRequest = require("trim-request")
+  const isJWT = passport.authenticate('jwt', { session: false })
 
-  app.post("/products", products.create);
+  app.post("/products", [isJWT], products.create);
   app.get("/products", products.getAll);
   app.get("/products/:slug", products.getBySlug)
 };
