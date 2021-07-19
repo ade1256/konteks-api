@@ -129,10 +129,11 @@ Products.remove = (slug, result) => {
 
 Products.uploadImage = async (image, result) => {
   const fileProof = image.file;
+  console.log(fileProof)
   await fileProof.mv("./uploads/" + fileProof.name);
   result(null, {
     status: true,
-    url: `/uploads/${fileProof.name}`,
+    url: `/uploads/${fileProof.name}-${fileProof.md5}`,
     message: "Successfully upload image"
   })
 };
