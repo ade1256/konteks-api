@@ -10,4 +10,5 @@ module.exports = app => {
   app.get("/products/:slug", products.getBySlug)
   app.delete("/products/:slug", [isJWT], products.delete);
   app.put("/products/:id", [isJWT], products.update);
+  app.post("/products/uploadImage", [isJWT], products.uploadImage)
 };

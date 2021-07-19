@@ -93,3 +93,29 @@ exports.update = (req, res) => {
     }
   );
 };
+
+exports.uploadImage = (req, res) => {
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!"
+    });
+  }
+  if(!req.files) {
+    res.status(400).send({
+        status: false,
+        message: 'No file uploaded'
+    });
+  } else {
+    let image = {
+      file: req.files.file
+    }
+    Products.uploadImage(image, (err, data) => {
+      if (err)
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while creating the image."
+      });
+     else res.send(data);
+    })
+  }
+}
