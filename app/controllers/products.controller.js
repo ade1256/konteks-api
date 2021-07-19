@@ -28,8 +28,10 @@ exports.create = (req, res) => {
 
 exports.getAll = (req, res) => {
   // const isEmptyFilters = Object.keys(req.query).length === 0
+
   let filters = {
-    page: req.query.page === undefined ? 1 : req.query.page
+    page: req.query.page === undefined ? 1 : req.query.page,
+    keyword: req.query.keyword === undefined ? "" : req.query.keyword
   }
   Products.getAll(filters, (err, data) => {
     if (err)

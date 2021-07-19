@@ -73,22 +73,55 @@ Products.updateById = (id, product, result) => {
 Products.getAll = (filter, result) => {
   let offset = (filter.page*10)-10
   const queryGetAll = `SELECT * FROM products LIMIT 10 OFFSET ${offset}`
-  sql.query(queryGetAll, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
-    }
-    let parseJson = []
-    res.map(product => {
-      parseJson.push({
-        ...product,
-        variants: JSON.parse(product.variants)
+  if(filter.keyword !== "") {
+    sql.query(`SELECT * FROM products WHERE LOWER(name) LIKE '%${filter.keyword}%'`, (err, resKeyword) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+      let parseJson = []
+      resKeyword.map(product => {
+        parseJson.push({
+          ...product,
+          variants: JSON.parse(product.variants)
+        })
+        return ''
       })
-      return ''
+      result(null, {
+        success: true,
+        data: parseJson,
+        currentPage: filter.page,
+        total: parseJson.length,
+        totalPage: 1
+      })
     })
-    result(null, parseJson)
-  })
+  } else {
+    sql.query(`SELECT COUNT(*) FROM products`, (errTotalRecord, resTotalRecord) => {
+      sql.query(queryGetAll, (err, res) => {
+        if (err) {
+          console.log("error: ", err);
+          result(err, null);
+          return;
+        }
+        let parseJson = []
+        res.map(product => {
+          parseJson.push({
+            ...product,
+            variants: JSON.parse(product.variants)
+          })
+          return ''
+        })
+        result(null, {
+          success: true,
+          data: parseJson,
+          currentPage: filter.page,
+          total: parseJson.length,
+          totalPage: Math.floor((resTotalRecord[0]["COUNT(*)"] + 10-1)/10)
+        })
+      })
+    })
+  }
 }
 
 Products.getBySlug = (slug, result) => {
