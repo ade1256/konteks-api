@@ -133,7 +133,7 @@ Products.uploadImage = async (image, result) => {
   await fileProof.mv("./uploads/" + fileProof.name);
   result(null, {
     status: true,
-    url: `/uploads/${fileProof.name}-${fileProof.md5}`,
+    url: `/uploads/${fileProof.md5}-${fileProof.name}`,
     message: "Successfully upload image"
   })
 };
