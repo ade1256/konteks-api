@@ -76,4 +76,130 @@ Orders.create = async (newOrder, result) => {
   
 };
 
+Orders.getAll = async (filter, result) => {
+  let offset = (filter.page*10)-10
+  const queryGetAll = `SELECT * FROM orders LIMIT 10 OFFSET ${offset}`
+  if(filter.keyword !== "") {
+    sql.query(`SELECT * FROM orders WHERE LOWER(id) LIKE '%${filter.keyword}%'`, (err, resKeyword) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+      let parseJson = []
+      resKeyword.map(order => {
+        parseJson.push({
+          ...order
+        })
+        return ''
+      })
+      result(null, {
+        success: true,
+        data: parseJson,
+        currentPage: filter.page,
+        total: parseJson.length,
+        totalPage: 1
+      })
+    })
+  } else {
+    sql.query(`SELECT COUNT(*) FROM orders`, (errTotalRecord, resTotalRecord) => {
+      sql.query(queryGetAll, (err, res) => {
+        if (err) {
+          console.log("error: ", err);
+          result(err, null);
+          return;
+        }
+        let parseJson = []
+        res.map(order => {
+          parseJson.push({
+            ...order
+          })
+          return ''
+        })
+        result(null, {
+          success: true,
+          data: parseJson,
+          currentPage: filter.page,
+          total: parseJson.length,
+          totalPage: Math.floor((resTotalRecord[0]["COUNT(*)"] + 10-1)/10)
+        })
+      })
+    })
+  }
+}
+
+Orders.remove = (id, result) => {
+  sql.query("DELETE FROM orders WHERE id = ?", id, (err, res) => {
+    if (err) {
+      result(null, err);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      result({ kind: "not_found" }, null);
+      return;
+    }
+
+    result(null, res);
+  });
+};
+
+Orders.changeStatus = (body, result) => {
+  sql.query(`UPDATE orders SET status = ? WHERE id = ?`,
+  [
+    body.status,
+    body.id
+  ],(err, res) => {
+    if (err) {
+      result(null, err);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      result({ success: false, kind: "not_found" }, null);
+      return;
+    }
+
+    result(null, { success: true, ...body });
+  })
+}
+Orders.changeResi = (body, result) => {
+  sql.query(`UPDATE orders SET noResi = ? WHERE id = ?`,
+  [
+    body.noResi,
+    body.id
+  ],(err, res) => {
+    if (err) {
+      result(null, err);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      result({ success: false, kind: "not_found" }, null);
+      return;
+    }
+
+    result(null, { success: true, ...body });
+  })
+}
+
+Orders.getById = (id, result) => {
+  const queryGet = `SELECT * FROM orders WHERE id = '${id}'`
+  sql.query(queryGet, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    let parseJson = {}
+    res.map(order => {
+      parseJson = {
+        ...order,
+      }
+      return ''
+    })
+    result(null, parseJson)
+  })
+}
+
 module.exports = Orders;
